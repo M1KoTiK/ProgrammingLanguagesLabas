@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <script>
+            function showDescription(combo){
+                var descField = document.getElementById("description")
+                switch (combo.value){
+                    case "A": 
+                        descField.innerHTML= "Мотоциклы";
+                    break;
+                    case "B": 
+                        descField.innerHTML= "Легковые автомобили";
+                    break;
+                    case "C": 
+                        descField.innerHTML= "Грузовые автомобили";
+                    break;
+                    case "D": 
+                        descField.innerHTML= "Автобусы";
+                    break;
+                    case "E": 
+                        descField.innerHTML= "Автомобили с прицепом";
+                    break;                  
+                }
+            }
+        </script>
+    </head>
+    <body>
+        <select onchange="showDescription(this)">
+            <option value="A">Категория A</option>
+            <option value="B">Категория B</option>
+            <option value="C">Категория C</option>
+            <option value="D">Категория D</option>
+            <option value="E">Категория E</option>
+        </select>
+        <span><b>Описание:</b></span>
+        <span id="description">Мотоциклы</span>
+
+    </body>
+</html>

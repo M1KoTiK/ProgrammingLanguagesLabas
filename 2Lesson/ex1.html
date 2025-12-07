@@ -1,0 +1,74 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Калькулятор делителей</title>
+    <style>
+        body {
+            margin: 0;
+            padding: 20px;
+        }
+        
+        .container {
+            text-align: center;
+            margin-top: 50px;
+        }
+        
+        input[type="number"] {
+            padding: 12px 16px;
+            font-size: 18px;
+            width: 140px;
+            text-align: center;
+            border-radius: 8px;
+        }    
+        .divisors {
+            margin: 25px auto;
+            padding: 20px;
+            max-width: 600px;
+            font-size: 18px;
+            min-height: 24px;
+            background: white;
+            border-radius: 10px;
+        }
+        
+        #divisors {
+            display: inline-block;
+            margin-top: 10px;
+            padding: 8px 12px;
+            background-color: #f0f4ff;
+            border-radius: 6px;
+            font-weight: 500;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <input type="number" min="2" value="24" oninput="showDivisors(this)"/>     
+    </div>
+    <div class="divisors">
+        <b>Делители:</b>
+        <span id="divisors">2</span>
+    </div>
+    <script>
+        function showDivisors(spinner) {
+            const n = parseInt(spinner.value);
+            const divisorsElement = document.getElementById("divisors");
+            
+            if (n > 1000000) {
+                divisorsElement.innerHTML = "Число слишком большое";
+                return;
+            }
+            
+            let divisors = [];
+            for (let i = 1; i <= n; i++) {
+                if (n % i === 0) {
+                    divisors.push(i);
+                }
+            }
+            
+            divisorsElement.innerHTML = divisors.join(' ');
+        }
+    </script>
+</body>
+</html>

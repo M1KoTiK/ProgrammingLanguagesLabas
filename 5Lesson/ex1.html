@@ -1,0 +1,193 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <title>Рисование прямоугольников</title>
+    <style>
+        body {
+            margin: 20px;
+        }
+        .container {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+        canvas {
+            border: 1px solid #ccc;
+            margin-bottom: 20px;
+            cursor: crosshair;
+        }
+        .controls {
+            display: flex;
+            gap: 30px;
+        }
+        .control-group {
+            margin-bottom: 10px;
+        }
+        .color-preview {
+            width: 100px;
+            height: 30px;
+            border: 1px solid #ccc;
+            margin-top: 10px;
+        }
+        button {
+            margin-top: 10px;
+            padding: 5px 10px;
+        }
+    </style>
+    <script>
+        const canvas = document.getElementById('canvas');
+        const ctx = canvas.getContext('2d');
+        
+        const redSlider = document.getElementById('redSlider');
+        const greenSlider = document.getElementById('greenSlider');
+        const blueSlider = document.getElementById('blueSlider');
+        const clearButton = document.getElementById('clearButton');
+        const randomColorButton = document.getElementById('randomColorButton');
+        const colorPreview = document.getElementById('colorPreview');
+        
+        let rectangles = [];
+        let isDrawing = false;
+        let startX, startY;
+        let currentRect = null;
+        
+        function updateColor() {
+            const color = `rgb(${redSlider.value}, ${greenSlider.value}, ${blueSlider.value})`;
+            colorPreview.style.backgroundColor = color;
+        }
+        
+        function draw() {
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+            
+            rectangles.forEach(rect => {
+                ctx.fillStyle = rect.color;
+                ctx.fillRect(rect.x, rect.y, rect.width, rect.height);
+                ctx.strokeStyle = '#000';
+                ctx.strokeRect(rect.x, rect.y, rect.width, rect.height);
+            });
+            
+            if (currentRect) {
+                ctx.fillStyle = currentRect.color;
+                ctx.fillRect(currentRect.x, currentRect.y, currentRect.width, currentRect.height);
+                ctx.strokeStyle = '#000';
+                ctx.strokeRect(currentRect.x, currentRect.y, currentRect.width, currentRect.height);
+            }
+        }
+        
+        canvas.addEventListener('mousedown', (e) => {
+            const rect = canvas.getBoundingClientRect();
+            startX = e.clientX - rect.left;
+            startY = e.clientY - rect.top;
+            isDrawing = true;
+            
+            currentRect = {
+                x: startX,
+                y: startY,
+                width: 0,
+                height: 0,
+                color: `rgb(${redSlider.value}, ${greenSlider.value}, ${blueSlider.value})`
+            };
+        });
+        
+        canvas.addEventListener('mousemove', (e) => {
+            if (!isDrawing) return;
+            
+            const rect = canvas.getBoundingClientRect();
+            const currentX = e.clientX - rect.left;
+            const currentY = e.clientY - rect.top;
+            
+            currentRect.width = currentX - startX;
+            currentRect.height = currentY - startY;
+            
+            draw();
+        });
+        
+        canvas.addEventListener('mouseup', (e) => {
+            if (!isDrawing) return;
+            
+            const width = currentRect.width;
+            const height = currentRect.height;
+            
+            if (Math.abs(width) > 2 && Math.abs(height) > 2) {
+                const x = width >= 0 ? startX : startX + width;
+                const y = height >= 0 ? startY : startY + height;
+                
+                rectangles.push({
+                    x: x,
+                    y: y,
+                    width: Math.abs(width),
+                    height: Math.abs(height),
+                    color: currentRect.color
+                });
+            }
+            
+            isDrawing = false;
+            currentRect = null;
+            draw();
+        });
+        
+        redSlider.addEventListener('input', () => {
+            document.getElementById('redValue').textContent = redSlider.value;
+            updateColor();
+        });
+        
+        greenSlider.addEventListener('input', () => {
+            document.getElementById('greenValue').textContent = greenSlider.value;
+            updateColor();
+        });
+        
+        blueSlider.addEventListener('input', () => {
+            document.getElementById('blueValue').textContent = blueSlider.value;
+            updateColor();
+        });
+        
+        clearButton.addEventListener('click', () => {
+            rectangles = [];
+            draw();
+        });
+        
+        randomColorButton.addEventListener('click', () => {
+            redSlider.value = Math.floor(Math.random() * 256);
+            greenSlider.value = Math.floor(Math.random() * 256);
+            blueSlider.value = Math.floor(Math.random() * 256);
+            
+            document.getElementById('redValue').textContent = redSlider.value;
+            document.getElementById('greenValue').textContent = greenSlider.value;
+            document.getElementById('blueValue').textContent = blueSlider.value;
+            
+            updateColor();
+        });
+        
+        updateColor();
+        draw();
+    </script>
+</head>
+<body>
+    <div class="container">       
+        <canvas id="canvas" width="800" height="500"></canvas>
+        
+        <div class="controls">
+            <div>
+                <div class="control-group">
+                    <label>Красный: <span id="redValue">127</span></label>
+                    <input type="range" id="redSlider" min="0" max="255" value="127">
+                </div>
+                <div class="control-group">
+                    <label>Зеленый: <span id="greenValue">127</span></label>
+                    <input type="range" id="greenSlider" min="0" max="255" value="127">
+                </div>
+                <div class="control-group">
+                    <label>Синий: <span id="blueValue">127</span></label>
+                    <input type="range" id="blueSlider" min="0" max="255" value="127">
+                </div>
+                <div class="color-preview" id="colorPreview"></div>
+            </div>
+            
+            <div>
+                <button id="clearButton">Очистить</button>
+                <button id="randomColorButton">Случайный цвет</button>
+            </div>
+        </div>
+    </div>
+</body>
+</html>

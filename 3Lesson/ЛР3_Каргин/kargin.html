@@ -1,0 +1,126 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <meta charset="UTF-8">
+        <style>
+            .container 
+            {
+                display: flex;
+                justify-content: center;
+                gap: 20px;
+                margin-bottom: 20px;
+            }
+            
+            .image-container 
+            {
+                display: flex;
+                flex-direction: column;
+                align-items: center;
+            }
+            
+            .image-container img 
+            {
+                margin-bottom: 10px;
+            }
+
+            .image-container input 
+            {
+                margin: 10px;
+            }
+
+            .outer
+            {
+                width:100%;
+                margin: 125px;
+                text-align: center;
+            }
+
+            .inner
+            {
+                display: inline-block;
+            }
+
+        </style>
+
+        <script>
+
+            class PicturePair 
+            {
+                constructor(src1, src2, imgElement, initialPause = 1000) {
+                    this.src1 = src1;
+                    this.src2 = src2;
+                    this.imgElement = imgElement;
+                    this.pause = initialPause;
+                    this.timer = null;
+                    this.start();
+                }
+                
+                toggle() {
+                    var currentSrc = this.imgElement.src.split('/').pop();
+                    var newSrc = currentSrc == this.src1 ? this.src2 : this.src1;
+                    this.imgElement.src = newSrc;
+                }
+                
+                start() {
+                    this.destroy(); 
+                    this.timer = setInterval(() => {this.toggle()}, this.pause);
+                }
+                
+                resetTimer(newPause) {
+                    console.log("reset");
+                    this.pause = parseInt(newPause); 
+                    this.start();
+                }
+                
+                destroy() {
+                    if (this.timer) {
+                        clearInterval(this.timer);
+                        this.timer = null;
+                    }
+                }
+            }
+            
+            var picturePairs = [];
+            
+            function ApplicationLoad() {   
+                console.log("Application loaded");
+                var pair1 = new PicturePair("happyPestunov.jpg", "sadPestunov.jpg", 
+                                           document.getElementById("img1"), 1000);
+                var pair2 = new PicturePair("happyPestunov.jpg", "rotatedPestunov.jpg", 
+                                           document.getElementById("img2"), 1000);
+                picturePairs.push(pair1, pair2);
+            }
+
+        </script>
+    </head>
+
+    <body onload="ApplicationLoad()">
+        <div class="container">
+            <div class="image-container">               
+                <img id="img1" src="happyPestunov.jpg" width="256">
+                <div class="inner">
+                    <button  onclick="picturePairs[0].destroy()">
+                        Стоп
+                    </button>
+                    <button onclick="picturePairs[0].start()">
+                        Старт
+                    </button>
+                </div>
+                <input type="number" step="100" value="1000" onchange="picturePairs[0].resetTimer(this.value)">
+            </div>
+            
+            <div class="image-container">               
+                <img id="img2" src="happyPestunov.jpg" width="256">
+                <div class="inner">
+                    <button  onclick="picturePairs[1].destroy()">
+                        Стоп
+                    </button>
+                    <button onclick="picturePairs[1].start()">
+                        Старт
+                    </button>
+                </div>
+                <input type="number" step="100" value="1000" onchange="picturePairs[1].resetTimer(this.value)">
+            </div>
+        </div>
+    </body>
+</html>

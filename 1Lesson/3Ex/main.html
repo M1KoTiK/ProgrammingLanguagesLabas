@@ -1,0 +1,20 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <script>
+            function changeColor(){
+                var redValue = document.getElementById("redInput").value;
+                var greenValue = document.getElementById("greenInput").value;
+                var blueValue = document.getElementById("blueInput").value;
+                var color = `rgb(${redValue}, ${greenValue}, ${blueValue})` 
+                document.getElementById("colorField").style.backgroundColor = color;
+            }
+        </script>
+    </head>
+    <body>
+        <input id="redInput" type="range" min="0" max="255" value="255" oninput="changeColor()"/>
+        <input id="greenInput" type="range" min="0" max="255" value="255" oninput="changeColor()"/>
+        <input id="blueInput" type="range" min="0" max="255" value="255" oninput="changeColor()"/>
+        <input id="colorField" title="Здесь видно цвет">
+    </body>
+</html>

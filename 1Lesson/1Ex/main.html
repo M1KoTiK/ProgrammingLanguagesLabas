@@ -1,0 +1,26 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <meta charset="UTF-8">
+        <title>Lesson1</title>
+        <script>
+            var isHappy = true;
+            var imageName;
+            function changeImage(){
+                console.log("12312");
+                if (isHappy){
+                    imageName = "happyFace.jpg"
+                    
+                }
+                else{
+                    imageName = "happyFaceReverse.jpg"
+                }
+                isHappy = !isHappy;
+                document.getElementById("img").src=imageName;
+            }
+        </script>
+    </head>
+    <body>
+        <img id="img" onclick="changeImage()" src="happyFace.jpg" width="256"/>
+    </body>
+</html>

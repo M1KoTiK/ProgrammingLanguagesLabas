@@ -1,0 +1,141 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <meta charset="UTF-8">
+        <title>Лаба7Каргин</title>
+    </head>
+    <body>
+        <canvas id="canvas" width="600" height="400" style="border:1px solid black; cursor: none;"></canvas>
+        <script>
+
+            class CursorShape 
+            {
+                constructor(x, y, size, color, ctx, eraseColor='white') 
+                {
+                    this.x = x;
+                    this.y = y;
+                    this.ctx = ctx;
+                    this.size = size;
+                    this.color = color;
+                    this.eraseColor = eraseColor;
+                    this.isDrawing = false;
+                    this.isErasing = false;
+                    this.drawnRects = [];
+                }
+
+                drawCursor() 
+                {
+                    if (this.isErasing) 
+                    {
+                        this.ctx.fillStyle = 'red';
+                    } 
+                    else if (this.isDrawing) 
+                    {
+                        this.ctx.fillStyle = 'blue';
+                    } 
+                    else 
+                    {
+                        this.ctx.fillStyle = 'gray';
+                    }
+                    this.ctx.fillRect(this.x - this.size/2, this.y - this.size/2, this.size, this.size);
+                }
+
+                redrawAll()
+                {
+                    this.ctx.fillStyle = this.eraseColor;
+                    this.ctx.fillRect(0, 0, this.ctx.canvas.width, this.ctx.canvas.height);
+                    
+                    for (let rect of this.drawnRects)
+                    {
+                        this.ctx.fillStyle = rect.color;
+                        this.ctx.fillRect(rect.x - rect.size/2, rect.y - rect.size/2, rect.size, rect.size);
+                    }
+                    
+                    this.drawCursor();
+                }
+
+                move(dx, dy) 
+                {   
+                    this.x += dx;
+                    this.y += dy;
+                    
+                    if (this.isDrawing) 
+                    {   
+                        this.drawnRects.push({
+                            x: this.x,
+                            y: this.y,
+                            size: this.size,
+                            color: this.color
+                        });
+                    }
+                    else if (this.isErasing) 
+                    {   
+                        this.drawnRects.push({
+                            x: this.x,
+                            y: this.y,
+                            size: this.size,
+                            color: this.eraseColor
+                        });
+                    }
+                    
+                    this.redrawAll();
+                }
+            }
+
+            const canvas = document.getElementById('canvas');
+            const ctx = canvas.getContext('2d');
+            let bgColor = '#FFFFFF';
+            
+            const shape = new CursorShape(canvas.width/2, canvas.height/2, 60, 'blue', ctx, bgColor);
+            shape.redrawAll();
+
+            addEventListener('keydown', (e)=>
+            {
+                if (e.code === 'Escape')
+                {
+                    shape.drawnRects = [];
+                    shape.x = canvas.width/2;
+                    shape.y = canvas.height/2;
+                    shape.isDrawing = false;
+                    shape.isErasing = false;
+                    shape.redrawAll();
+                    return;
+                }
+
+                if (e.code === 'ArrowUp') shape.move(0, -10);
+                if (e.code === 'ArrowDown') shape.move(0, 10);
+                if (e.code === 'ArrowLeft') shape.move(-10, 0);
+                if (e.code === 'ArrowRight') shape.move(10, 0);
+                
+                if (e.code === 'Space') 
+                {
+                    shape.isDrawing = !shape.isDrawing;
+                    if (shape.isDrawing) shape.isErasing = false;
+                    shape.redrawAll();
+                }
+                if (e.code === 'KeyE') 
+                {
+                    shape.isErasing = !shape.isErasing;
+                    if (shape.isErasing) shape.isDrawing = false;
+                    shape.redrawAll();
+                }
+                
+                if (e.code === 'KeyS') 
+                {
+                    shape.size = 30;
+                    shape.redrawAll();
+                }
+                if (e.code === 'KeyM')
+                {
+                    shape.size = 60;
+                    shape.redrawAll();
+                }
+                if (e.code === 'KeyB') 
+                {
+                    shape.size = 90;
+                    shape.redrawAll();
+                }
+            })
+        </script>
+    </body>
+</html>

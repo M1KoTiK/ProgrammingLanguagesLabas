@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <style>
+        .control { margin-bottom: 10px; }
+        #canvas { 
+            border: 1px solid #ccc; 
+        }
+    </style>
+</head>
+<body>
+    <div class="control">
+        <label><input type="checkbox" id="red" checked> R</label>
+        <label><input type="checkbox" id="green" checked> G</label>
+        <label><input type="checkbox" id="blue" checked> B</label>
+        <input type="range" min="50" max="1000" value="200" oninput="updateSpeed(this.value)">
+        <button onclick="clearCanvas()">Очистить</button>
+    </div>
+    <canvas id="canvas" width="800" height="400"></canvas>
+
+    <script>
+        let timer = null;
+        let speed = 200;
+        let colors = ['R','G','B'];
+        const canvas = document.getElementById('canvas');
+        const ctx = canvas.getContext('2d');
+        
+        function update() {
+            colors = [];
+            if(document.getElementById('red').checked) colors.push('R');
+            if(document.getElementById('green').checked) colors.push('G');
+            if(document.getElementById('blue').checked) colors.push('B');
+        }
+        
+        function updateSpeed(value) {
+            speed = value;
+            clearInterval(timer);
+            timer = setInterval(createRect, speed);
+        }
+        
+        function createRect() {
+            const r = colors.includes('R') ? Math.floor(Math.random() * 256) : 0;
+            const g = colors.includes('G') ? Math.floor(Math.random() * 256) : 0;
+            const b = colors.includes('B') ? Math.floor(Math.random() * 256) : 0;
+            
+            const x = Math.random() * (canvas.width - 50);
+            const y = Math.random() * (canvas.height - 50);
+            
+            ctx.fillStyle = `rgb(${r},${g},${b})`;
+            ctx.fillRect(x, y, 50, 50);
+        }
+        
+        function clearCanvas() {
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+        }
+        
+        document.getElementById('red').onchange = update;
+        document.getElementById('green').onchange = update;
+        document.getElementById('blue').onchange = update;
+        
+        timer = setInterval(createRect, speed);
+    </script>
+</body>
+</html>
