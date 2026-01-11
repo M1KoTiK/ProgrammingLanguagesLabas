@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <meta charset="UTF-8">
+        <title>Лаба8Каргин</title>
+    </head>
+    <body onload="init()">
+        <canvas id="canvas" width="600" height="400" style="border:1px solid black; cursor: none;"></canvas>
+        <script>
+            var ctx;
+            var canvas;
+            var currentColor = "#0000ff";
+            function init()
+            {   
+                var canvas = document.getElementById('canvas');
+                ctx = canvas.getContext('2d');
+                document.addEventListener('mousedown', OnMouseDown);
+                document.addEventListener('mouseup', OnMouseUp);
+                document.addEventListener('mousemove', OnMouseMove);
+                ctx.strokeStyle = currentColor;
+            }
+
+            function OnMouseDown(e)
+            {
+                currentColor = "#ff0000"
+            }
+
+            function OnMouseUp(e)
+            {
+                currentColor = "#0000ff";
+                
+            }
+
+            function OnMouseMove(e)
+            {
+                var canvas = document.getElementById('canvas');
+                var rect = canvas.getBoundingClientRect();
+
+                ctx.fillStyle = currentColor;
+                ctx.fillRect(e.clientX - rect.left - 10, e.clientY - rect.top - 10, 20, 20);
+            }
+
+        </script>
+    </body>
+</html>
