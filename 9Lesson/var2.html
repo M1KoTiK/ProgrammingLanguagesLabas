@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <meta charset="UTF-8">
+        <title>Лаба9Каргин</title>
+    </head>
+    <body onload="init()">
+        <label>Радиус<input type="number" id="radius" value="100" min="10"  max="1000" oninput="drawPolygon()"></label><br>
+        <label>Углы<input type="number" id="sides" value="5" min="3" max="100" oninput="drawPolygon()"></label><br>
+        <label>Толщина<input type="number" id="lineWidth" value="2" min="1" oninput="drawPolygon()"></label><br>
+        <label>Цвет контура<input type="color" id="strokeColor" value="#000000" oninput="drawPolygon()"></label><br>
+        <label>Цвет заливки<input type="color" id="fillColor" value="#ff0000" oninput="drawPolygon()"></label><br>
+        <label>Требуется заливка<input type="checkbox" id="fillEnabled" oninput="drawPolygon()"></label><br>
+        <canvas id="canvas" width="500" height="500"></canvas>
+        
+        <script>
+            var canvas;
+            var ctx;
+            
+            function init() 
+            {
+                canvas = document.getElementById('canvas');
+                ctx = canvas.getContext('2d');
+                drawPolygon();
+            }
+            
+            function drawPolygon() 
+            {            
+                var radius = document.getElementById('radius').value;
+                var sides = document.getElementById('sides').value;
+                var lineWidth = document.getElementById('lineWidth').value;
+                var strokeColor = document.getElementById('strokeColor').value;
+                var fillColor = document.getElementById('fillColor').value;
+                var fillEnabled = document.getElementById('fillEnabled').checked;
+                
+                sides = Math.min(Math.max(3, sides),100);
+                
+                ctx.clearRect(0, 0, canvas.width, canvas.height);
+                ctx.save();
+                ctx.translate(canvas.width / 2, canvas.height / 2);
+                
+                ctx.beginPath();
+                for (let i = 0; i < sides; i++) 
+                {
+                    const angle = (i * 2 * Math.PI / sides) - Math.PI / 2;
+                    const x = radius * Math.cos(angle);
+                    const y = radius * Math.sin(angle);
+                    if (i === 0) ctx.moveTo(x, y);
+                    else ctx.lineTo(x, y);
+                }
+                ctx.closePath();
+                
+                if (fillEnabled) 
+                {
+                    ctx.fillStyle = fillColor;
+                    ctx.fill();
+                }
+                
+                ctx.lineWidth = lineWidth;
+                ctx.strokeStyle = strokeColor;
+                ctx.stroke();
+                ctx.restore();
+            }
+        </script>
+    </body>
+</html>
