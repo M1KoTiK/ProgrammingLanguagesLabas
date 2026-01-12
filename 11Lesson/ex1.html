@@ -1,0 +1,79 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <title>Лаба11Каргин</title>
+</head>
+<body>
+    <canvas id="canvas" width="800" height="600" style="border:1px solid black;"></canvas>
+    <script>
+        const canvas = document.getElementById('canvas');
+        const ctx = canvas.getContext('2d');
+        
+        let dragging = false;
+        let currentFilter = 'none';
+        let imgX = 50;
+        let imgY = 50;
+        let imgW = 100;
+        let imgH = 120;
+        let offsetX = 0;
+        let offsetY = 0;
+        let image = new Image();
+        image.src = 'dragdropimage.jpg';
+        
+        function drawImage() 
+        {
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+            ctx.filter = dragging ? 'grayscale(100%)' : currentFilter;
+            ctx.drawImage(image, imgX, imgY, imgW, imgH);
+            ctx.filter = 'none';
+        }
+        
+        image.onload = function() 
+        {
+            drawImage();
+        };
+        
+        canvas.addEventListener('mousedown', (e) => 
+        {
+            const mouseX = e.offsetX;
+            const mouseY = e.offsetY;
+            
+            if (mouseX >= imgX && mouseX <= imgX + imgW &&
+                mouseY >= imgY && mouseY <= imgY + imgH) 
+            {
+                dragging = true;
+                offsetX = mouseX - imgX;
+                offsetY = mouseY - imgY;
+                drawImage();
+            }
+        });
+        
+        canvas.addEventListener('mousemove', (e) => 
+        {
+            if (!dragging) return;
+            
+            imgX = e.offsetX - offsetX;
+            imgY = e.offsetY - offsetY;
+            drawImage();
+        });
+        
+        canvas.addEventListener('mouseup', () => 
+        {
+            if (dragging) 
+            {
+                dragging = false;
+                drawImage();
+            }
+        });
+        
+        document.addEventListener('keydown', (e) => 
+        {
+            if (e.key === '1') currentFilter = 'hue-rotate(240deg)';
+            if (e.key === '2') currentFilter = 'hue-rotate(0deg)';
+            if (e.key === '3') currentFilter = 'hue-rotate(120deg)';
+            drawImage();
+        });
+    </script>
+</body>
+</html>

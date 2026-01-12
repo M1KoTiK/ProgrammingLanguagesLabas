@@ -23,13 +23,15 @@
         var canvas;
         var ctx;
 
-        function init() {
+        function init() 
+        {
             canvas = document.getElementById('canvas');
             ctx = canvas.getContext('2d');
             drawPolygon();
         }
 
-        function drawPolygon() {
+        function drawPolygon() 
+        {
             var radius = document.getElementById('radius').value;
             var sides = document.getElementById('sides').value;
             var lineWidth = document.getElementById('lineWidth').value;
@@ -50,7 +52,8 @@
             ctx.translate(canvas.width / 2, canvas.height / 2);
 
             ctx.beginPath();
-            for (let i = 0; i < sides; i++) {
+            for (let i = 0; i < sides; i++) 
+            {
                 const angle = (i * 2 * Math.PI / sides) - Math.PI / 2;
                 const x = radius * Math.cos(angle);
                 const y = radius * Math.sin(angle);
@@ -59,7 +62,8 @@
             }
             ctx.closePath();
 
-            if (fillEnabled) {
+            if (fillEnabled) 
+            {
                 ctx.fillStyle = fillColor;
                 ctx.fill();
             }
