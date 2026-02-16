@@ -10,15 +10,15 @@
         const canvas = document.getElementById('canvas');
         const ctx = canvas.getContext('2d');
         
-        let dragging = false;
-        let currentFilter = 'none';
-        let imgX = 50;
-        let imgY = 50;
-        let imgW = 100;
-        let imgH = 120;
-        let offsetX = 0;
-        let offsetY = 0;
-        let image = new Image();
+        var dragging = false;
+        var currentFilter = 'none';
+        var imgX = 50;
+        var imgY = 50;
+        var imgW = 100;
+        var imgH = 120;
+        var offsetX = 0;
+        var offsetY = 0;
+        var image = new Image();
         image.src = 'dragdropimage.jpg';
         
         function drawImage() 

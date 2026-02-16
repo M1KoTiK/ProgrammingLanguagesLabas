@@ -1,0 +1,106 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <title>Лаба2.1Каргин</title>
+</head>
+<body>
+    <form id="userForm">
+        <label>Имя (только буквы, не более 20):</label><br>
+        <input type="text" id="firstName"><br>
+        <span id="firstNameError"></span><br>
+
+        <label>Фамилия (только буквы, не более 20):</label><br>
+        <input type="text" id="lastName"><br>
+        <span id="lastNameError"></span><br>
+
+        <label>Почтовый индекс (ровно 6 цифр):</label><br>
+        <input type="text" id="zip"><br>
+        <span id="zipError"></span><br>
+
+        <label>Email (login@server.domain):</label><br>
+        <input type="text" id="email"><br>
+        <span id="emailError"></span><br>
+
+        <label>Телефон (8-XXX-XXX-XX-XX):</label><br>
+        <input type="text" id="phone" placeholder="8-XXX-XXX-XX-XX"><br>
+        <span id="phoneError"></span><br>
+
+        <label>Дата рождения (дд/мм/гггг или дд.мм.гггг):</label><br>
+        <input type="text" id="birthdate"><br>
+        <span id="birthdateError"></span><br>
+    </form>
+
+    <script>
+        function validateName(value) {
+            if (value.length === 0) return "Поле не может быть пустым";
+            if (value.length > 20) return "Не более 20 символов";
+            if (!/^[a-zA-Zа-яА-ЯёЁ]+$/.test(value)) return "Только буквы";
+            return "";
+        }
+
+        function validateLastName(value) {
+            return validateName(value); 
+        }
+
+        function validateZip(value) {
+            if (value.length === 0) return "Поле не может быть пустым";
+            if (!/^\d{6}$/.test(value)) return "Ровно 6 цифр";
+            return "";
+        }
+
+        function validateEmail(value) {
+            if (value.length === 0) return "Поле не может быть пустым";
+            const regex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+            if (!regex.test(value)) return "Формат: login@server.domain";
+            return "";
+        }
+
+        function validatePhone(value) {
+            if (value.length === 0) return "Поле не может быть пустым";
+            const regex = /^8-\d{3}-\d{3}-\d{2}-\d{2}$/;
+            if (!regex.test(value)) return "Формат: 8-XXX-XXX-XX-XX";
+            return "";
+        }
+
+        function validateDate(value) {
+            if (value.length === 0) return "Поле не может быть пустым";
+
+            let parts;
+            if (value.includes('/')) {
+                parts = value.split('/');
+            } else if (value.includes('.')) {
+                parts = value.split('.');
+            } else {
+                return "Формат: дд/мм/гггг или дд.мм.гггг";
+            }
+
+            if (parts.length !== 3) return "Формат: дд/мм/гггг или дд.мм.гггг";
+
+            const day = parseInt(parts[0], 10);
+            const month = parseInt(parts[1], 10);
+            const year = parseInt(parts[2], 10);
+
+            if (isNaN(day) || isNaN(month) || isNaN(year)) return "Введите числа";
+            if (month < 1 || month > 12) return "Месяц от 1 до 12";
+
+            const daysInMonth = new Date(year, month, 0).getDate();
+            if (day < 1 || day > daysInMonth) return `В этом месяце только ${daysInMonth} дней`;
+
+            return "";
+        }
+
+        function setupValidation(inputId, errorSpanId, validationFn) {
+            const input = document.getElementById(inputId);
+            const errorSpan = document.getElementById(errorSpanId);
+
+            function validate() {
+                const error = validationFn(input.value);
+                errorSpan.innerHTML = error ? `<span style="color: red;">${error}</span>` : '';
+            }
+            input.addEventListener('blur', validate);
+            input.addEventListener('keyup', validate);
+        }
+    </script>
+</body>
+</html>
