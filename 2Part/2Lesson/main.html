@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <meta charset="UTF-8">
+        <title>Lesson2</title>
+        <script src="base.js"></script>
+        <script>
+            function SimpleCalcProcessing(num1Control, num2Control, selectControl, resultControl)
+            { 
+                n1 = parseInt(num1Control.value)
+                n2 = parseInt(num2Control.value)
+                op = selectControl.selectedOptions[0].value;
+                if (op === "+"){
+                    resultControl.innerHTML = n1 + n2;
+                }
+                if (op === "-"){
+                    resultControl.innerHTML = n1 - n2;
+                }
+                if (op === "/"){
+                    resultControl.innerHTML = n1 / n2;
+                }
+                if (op === "*"){
+                    resultControl.innerHTML = n1 * n2;
+                }
+
+            }
+
+            function drawCalcOne()
+            {   
+                let num1Control = number("n1", ()=>SimpleCalcProcessing(num1Control, num2Control, selectControl, resultControl));
+                let num2Control = number("n2", ()=>SimpleCalcProcessing(num1Control, num2Control, selectControl, resultControl));
+                let selectControl = select("op", ["+","-","/","*"], ()=>SimpleCalcProcessing(num1Control, num2Control, selectControl, resultControl))
+                let resultControl = label("")
+                add(num1Control, "place");
+                add(selectControl, "place");
+                add(num2Control, "place");
+                add(resultControl, "place")
+            }
+
+            function onCalcChanged(el, idx)
+            {
+                if (idx === 0)
+                {   
+                    clr("place");
+                    drawCalcOne();
+                }
+                if (idx === 1)
+                {
+                    clr("place");
+                }
+            }
+
+            function init(){
+                Array.from(document.calc_choice.calculators).forEach((el, idx) => el.addEventListener("click",()=> onCalcChanged(el, idx)))
+                document.calc_choice.calculators[0].checked = true;                
+            }
+
+        </script>
+    </head>
+    <body onload="init()">
+        <form name="calc_choice">
+            <input type="radio" name="calculators" checked="true" value="1"/> <span>Обычный калькулятор</span> <br/>
+            <input type="radio" name="calculators" value="2"/> <span>Калькулятор процентов</span> <br/>
+            <input type="radio" name="calculators" value="3"/> <span>Дополнительный калькулятор</span> <br/>
+        </form>
+
+        <div id="place"></div>
+
+    </body>
+</html>
