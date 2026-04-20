@@ -5,6 +5,7 @@
         <title>Lesson2</title>
         <script src="base.js"></script>
         <script>
+		
             function SimpleCalcProcessing(num1Control, num2Control, selectControl, resultControl)
             { 
                 n1 = parseInt(num1Control.value)
@@ -22,8 +23,38 @@
                 if (op === "*"){
                     resultControl.innerHTML = n1 * n2;
                 }
-
             }
+
+            function BMICalcProcessing(weightControl, heightControl, resultControl)
+            {
+                let weight = parseFloat(weightControl.value);
+                let height = parseFloat(heightControl.value) / 100;
+                if (weight > 0 && height > 0) {
+                    let bmi = weight / (height * height);
+                    let category = "";
+                    if (bmi < 18.5) category = "Недостаточный вес";
+                    else if (bmi < 25) category = "Нормальный вес";
+                    else if (bmi < 30) category = "Избыточный вес";
+                    else category = "Ожирение";
+                    resultControl.innerHTML = `ИМТ: ${bmi.toFixed(2)}<br>${category}`;
+                } else {
+                    resultControl.innerHTML = "Введите корректные данные";
+                }
+            }
+			
+			function CircleProcessing(radiusControl, resultControl)
+			{
+				let radius = parseFloat(radiusControl.value);
+				if (radius > 0) 
+				{
+					let circumference = 2 * Math.PI * radius;
+					resultControl.innerHTML = `Длина окружности: ${circumference.toFixed(2)}`;
+				} 
+				else 
+				{
+					resultControl.innerHTML = "Введите радиус > 0";
+				}
+			}
 
             function drawCalcOne()
             {   
@@ -37,6 +68,40 @@
                 add(resultControl, "place")
             }
 
+            function drawCalcеTwo()
+            {   
+                add(label("Вес (кг)"), "place");
+                let weightControl = number("weight", ()=>BMICalcProcessing(weightControl, heightControl, resultControl));
+                weightControl.step = 0.1;
+                add(weightControl, "place");
+                add(br(), "place");
+                
+                add(label("Рост (см)"), "place");
+                let heightControl = number("height", ()=>BMICalcProcessing(weightControl, heightControl, resultControl));
+                heightControl.step = 1;
+                add(heightControl, "place");
+                add(br(), "place");
+                
+                let resultControl = label("");
+                add(resultControl, "place");
+            }
+			
+			function drawCalcThree()
+			{
+				add(label("Радиус"), "place");
+				let radiusControl = number("radius");
+				radiusControl.step = 0.1;
+				radiusControl.min = 0.1;
+				
+				let resultControl = label("");
+				
+				radiusControl.oninput = ()=>CircleProcessing(radiusControl, resultControl);
+				
+				add(radiusControl, "place");
+				add(br(), "place");
+				add(resultControl, "place");
+			}
+
             function onCalcChanged(el, idx)
             {
                 if (idx === 0)
@@ -47,12 +112,22 @@
                 if (idx === 1)
                 {
                     clr("place");
+                    drawCalcеTwo()
                 }
+				if (idx === 2) 
+				{
+				clr("place");
+				drawCalcThree();
+				}
             }
-
-            function init(){
+			
+			
+			
+            function init()
+			{
                 Array.from(document.calc_choice.calculators).forEach((el, idx) => el.addEventListener("click",()=> onCalcChanged(el, idx)))
-                document.calc_choice.calculators[0].checked = true;                
+                document.calc_choice.calculators[0].checked = true;
+				onCalcChanged(document.calc_choice.calculators[0], 0);			
             }
 
         </script>
@@ -60,8 +135,8 @@
     <body onload="init()">
         <form name="calc_choice">
             <input type="radio" name="calculators" checked="true" value="1"/> <span>Обычный калькулятор</span> <br/>
-            <input type="radio" name="calculators" value="2"/> <span>Калькулятор процентов</span> <br/>
-            <input type="radio" name="calculators" value="3"/> <span>Дополнительный калькулятор</span> <br/>
+            <input type="radio" name="calculators" value="2"/> <span>Калькулятор массы тела</span> <br/>
+            <input type="radio" name="calculators" value="3"/> <span>Калькулятор длины окружности </span> <br/>
         </form>
 
         <div id="place"></div>
