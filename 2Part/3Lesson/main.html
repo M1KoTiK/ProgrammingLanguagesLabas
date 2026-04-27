@@ -1,0 +1,123 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <meta charset="UTF-8">
+        <title>Лаба3</title>
+    </head>
+    <body>
+        <div style="border:1px solid #ccc; padding:10px; margin-bottom:20px">
+            <input id="surname" placeholder="Фамилия" size="12">
+            <input id="name" placeholder="Имя" size="12">
+            <input id="email" placeholder="Email" size="15">
+            <input id="phone" placeholder="Телефон" size="12">
+            <input id="birthdate" placeholder="ДД.ММ.ГГГГ" size="10">
+            <button onclick="add()">Добавить</button>
+            <div id="err" style="color:red; font-size:12px; margin-top:5px"></div>
+        </div>
+
+        <div style="margin-bottom:10px">
+            <input id="search" placeholder="Поиск..." onkeyup="search()">
+            <button onclick="resetSearch()">Сброс</button>
+            <button onclick="sortBy('date')">По дате →</button>
+            <button onclick="sortBy('name')">А→Я</button>
+            <button onclick="sortBy('nameDesc')">Я→А</button>
+        </div>
+
+        <table border="1" cellpadding="5" width="100%">
+            <thead><tr><th>Фамилия</th><th>Имя</th><th>Дата</th><th>Email</th><th>Телефон</th></tr></thead>
+            <tbody id="list"></tbody>
+        </table>
+
+        <script>
+
+        let data = [
+            {s:"Сидоров", n:"Василий", d:"12.10.2001", e:"login@server.ru", p:"8-923-111-22-07"},
+            {s:"Васильев", n:"Андрей", d:"09.11.1999", e:"andrey@host.com", p:"8-111-666-21-23"},
+            {s:"Филиппова", n:"Анна", d:"04.02.1987", e:"anna@supermail.ru", p:"8-456-234-21-43"}
+        ];
+
+        let searchText = "";
+        let sortType = "";
+
+        function validate() {
+            let s = document.getElementById("surname").value.trim();
+            let n = document.getElementById("name").value.trim();
+            let e = document.getElementById("email").value.trim();
+            let p = document.getElementById("phone").value.trim();
+            let d = document.getElementById("birthdate").value.trim();
+            if(!s) return "Фамилия не может быть пустой!";
+            if(!/^[A-Za-zА-Яа-яЁё-]+$/.test(s)) return "Фамилия содержит цифры!";
+            if(s.length>20) return "Фамилия более 20 символов!";
+            if(!n) return "Имя не может быть пустым!";
+            if(!/^[A-Za-zА-Яа-яЁё-]+$/.test(n)) return "Имя содержит цифры!";
+            if(n.length>20) return "Имя более 20 символов!";
+            if(!e) return "Email не может быть пустым!";
+            if(!/^[^\s@]+@([^\s@]+\.)+[^\s@]+$/.test(e)) return "Некорректный email!";
+            if(!p) return "Телефон не может быть пустым!";
+            let digits = (p.match(/\d/g)||[]).length;
+            if(digits<5 || digits>15) return "Некорректный телефон!";
+            if(!/^(\d{1,2})\.(\d{1,2})\.(\d{4})$/.test(d)) return "Некорректная дата! (ДД.ММ.ГГГГ)";
+            let parts = d.split(".");
+            let day = parseInt(parts[0]), mon = parseInt(parts[1])-1, year = parseInt(parts[2]);
+            let date = new Date(year, mon, day);
+            if(date.getFullYear()!=year || date.getMonth()!=mon || date.getDate()!=day) return "Неверная дата!";
+            if(year<1900 || year>new Date().getFullYear()) return "Год вне диапазона!";
+            return "";
+        }
+
+        function add() {
+            let err = validate();
+            if(err) { document.getElementById("err").innerText = err; return; }
+            document.getElementById("err").innerText = "";
+            data.push({
+                s: document.getElementById("surname").value.trim(),
+                n: document.getElementById("name").value.trim(),
+                e: document.getElementById("email").value.trim(),
+                p: document.getElementById("phone").value.trim(),
+                d: document.getElementById("birthdate").value.trim()
+            });
+            document.getElementById("surname").value = "";
+            document.getElementById("name").value = "";
+            document.getElementById("email").value = "";
+            document.getElementById("phone").value = "";
+            document.getElementById("birthdate").value = "";
+            render();
+        }
+
+        function sortBy(type) 
+        { 
+            sortType = type; 
+            render(); 
+        }
+
+        function search() 
+        { 
+            searchText = document.getElementById("search").value.toLowerCase();
+            render(); 
+        }
+
+        function resetSearch() 
+        { 
+            document.getElementById("search").value = "";
+            searchText = ""; render(); 
+        }
+
+        function dateToNum(d) 
+        { 
+            let p = d.split("."); 
+            return parseInt(p[2]+p[1]+p[0]); 
+        }
+
+        function render() {
+            let filtered = data.filter(r => searchText==="" || r.s.toLowerCase().includes(searchText) || r.n.toLowerCase().includes(searchText) || r.e.toLowerCase().includes(searchText));
+            if(sortType === "date") filtered.sort((a,b) => dateToNum(a.d) - dateToNum(b.d));
+            if(sortType === "name") filtered.sort((a,b) => (a.s+" "+a.n).localeCompare(b.s+" "+b.n));
+            if(sortType === "nameDesc") filtered.sort((a,b) => (b.s+" "+b.n).localeCompare(a.s+" "+a.n));
+            let html = filtered.map(r => `<tr><td>${r.s}</td><td>${r.n}</td><td>${r.d}</td><td>${r.e}</td><td>${r.p}</td></tr>`).join("");
+            document.getElementById("list").innerHTML = html || "<tr><td colspan='5'>Нет записей</td></tr>";
+        }
+
+        render();
+        </script>
+    </body>
+</html>

@@ -1,0 +1,137 @@
+<!DOCTYPE html>
+    <head>
+        <meta charset="UTF-8">
+        <title>Лаба4</title>
+    </head>
+    <body>
+        <div style="border:1px solid #ccc; padding:10px; margin-bottom:20px">
+            <textarea id="text" rows="2" cols="40" placeholder="Текст записи"></textarea><br>
+            <input type="date" id="date" value="2026-04-27">
+            <input type="time" id="time" value="09:00">
+            <button onclick="add()">Добавить</button>
+        </div>
+
+        <div style="margin-bottom:15px">
+            <button id="morningBtn">Только утро (6-10)</button>
+            <button id="allBtn">Все записи</button>
+            <button id="sortNew">Сначала новые</button>
+            <button id="sortOld">Сначала старые</button>
+        </div>
+
+        <div style="margin-bottom:15px">
+            <input type="text" id="search" placeholder="Поиск по тексту" style="width:200px">
+            <button id="searchBtn">Найти</button>
+            <button id="clearBtn">Сброс</button>
+        </div>
+
+        <div id="posts"></div>
+
+        <script>
+            let posts = [
+                { text: "Проснулся в 7 утра", date: "2026-04-27", time: "07:15" },
+                { text: "Завтрак и кофе", date: "2026-04-27", time: "08:30" },
+                { text: "Работаю над проектом", date: "2026-04-26", time: "11:00" },
+                { text: "Обед вкусный", date: "2026-04-26", time: "13:20" },
+                { text: "Вечерняя прогулка", date: "2026-04-25", time: "18:30" },
+                { text: "Ранняя йога", date: "2026-04-25", time: "06:15" }
+            ];
+
+            let morningOnly = false;
+            let sortNewFirst = true;
+            let searchText = "";
+
+            function isMorning(t) {
+                let h = parseInt(t.split(":")[0]);
+                return h >= 6 && h <= 10;
+            }
+
+            function toMinutes(t) {
+                let [h,m] = t.split(":").map(Number);
+                return h*60+m;
+            }
+
+            function getTimestamp(date, time) {
+                return new Date(date + "T" + time).getTime();
+            }
+
+            function getFiltered() {
+                let result = [...posts];
+                
+                if(morningOnly) {
+                    result = result.filter(p => isMorning(p.time));
+                }
+                
+                if(searchText !== "") {
+                    let low = searchText.toLowerCase();
+                    result = result.filter(p => p.text.toLowerCase().includes(low));
+                }
+                
+                result.sort((a,b) => {
+                    let ta = getTimestamp(a.date, a.time);
+                    let tb = getTimestamp(b.date, b.time);
+                    if(sortNewFirst) return tb - ta;
+                    else return ta - tb;
+                });
+                
+                return result;
+            }
+
+            function formatDate(dateStr) {
+                let parts = dateStr.split("-");
+                return parts[2] + "." + parts[1] + "." + parts[0];
+            }
+
+            function render() {
+                let filtered = getFiltered();
+                let div = document.getElementById("posts");
+                
+                if(filtered.length === 0) {
+                    div.innerHTML = "<p>Нет записей</p>";
+                    return;
+                }
+                
+                let html = "";
+                for(let p of filtered) {
+                    let morningTag = isMorning(p.time) ? " [утро]" : "";
+                    html += `<div style="border:1px solid #ddd; margin:10px 0; padding:10px; border-radius:5px">
+                                <b>${formatDate(p.date)} ${p.time}</b>${morningTag}<br>
+                                ${p.text}
+                            </div>`;
+                }
+                div.innerHTML = html;
+            }
+
+            function add() {
+                let text = document.getElementById("text").value.trim();
+                let date = document.getElementById("date").value;
+                let time = document.getElementById("time").value;
+                
+                if(text === "") { alert("Введите текст"); return; }
+                if(!date) { alert("Введите дату"); return; }
+                if(!time) { alert("Введите время"); return; }
+                
+                posts.push({ text: text, date: date, time: time });
+                document.getElementById("text").value = "";
+                document.getElementById("date").value = "2026-04-27";
+                document.getElementById("time").value = "09:00";
+                render();
+            }
+
+            document.getElementById("morningBtn").onclick = function() { morningOnly = true; render(); };
+            document.getElementById("allBtn").onclick = function() { morningOnly = false; render(); };
+            document.getElementById("sortNew").onclick = function() { sortNewFirst = true; render(); };
+            document.getElementById("sortOld").onclick = function() { sortNewFirst = false; render(); };
+            document.getElementById("searchBtn").onclick = function() {
+                searchText = document.getElementById("search").value;
+                render();
+            };
+            document.getElementById("clearBtn").onclick = function() {
+                document.getElementById("search").value = "";
+                searchText = "";
+                render();
+            };
+
+            render();
+        </script>
+    </body>
+</html>
