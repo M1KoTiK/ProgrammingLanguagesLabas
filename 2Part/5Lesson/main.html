@@ -1,0 +1,96 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <meta charset="UTF-8">
+        <title>КаргинЛаба5</title>
+    </head>
+    <body>
+
+    <h3>Категории ТС</h3>
+    <select id="categorySelect">
+        <option value="A">Категория A (Мотоциклы)</option>
+        <option value="B">Категория B (Легковые авто)</option>
+        <option value="C">Категория C (Грузовики)</option>
+        <option value="D">Категория D (Автобусы)</option>
+        <option value="M">Категория M (Мопеды)</option>
+    </select>
+    <p>Результат <span id="switchResult">—</span></p>
+    <p>Последовательность ТС <span id="switchSequence">—</span></p>
+
+
+    <h3>Radio: Категории ТС</h3>
+    <div id="radioContainer">
+        <label><input type="radio" name="vehicleRadio" value="A"> A (Мотоциклы)</label><br>
+        <label><input type="radio" name="vehicleRadio" value="B"> B (Легковые)</label><br>
+        <label><input type="radio" name="vehicleRadio" value="C"> C (Грузовики)</label><br>
+        <label><input type="radio" name="vehicleRadio" value="D"> D (Автобусы)</label><br>
+        <label><input type="radio" name="vehicleRadio" value="M"> M (Мопеды)</label><br>
+        <label><input type="radio" name="vehicleRadio" value="E"> E (Прицепы)</label>
+    </div>
+    <p>Результат <span id="radioResult">—</span></p>
+    <p>Последовательность ТС <span id="radioSequence">—</span></p>
+
+    <script>
+        function getVehicleDescription(cat) {
+            switch(cat) {
+                case 'A': return 'Мотоциклы';
+                case 'B': return 'Легковые авто';
+                case 'C': return 'Грузовики';
+                case 'D': return 'Автобусы';
+                case 'M': return 'Мопеды, скутеры, квадроциклы';
+                case 'E': return 'Автомобили с прицепом (категория BE)';
+                default: return 'Неизвестная категория';
+            }
+        }
+
+        function getVehicleSequence(cat) {
+            switch(cat) {
+                case 'A': return ['Yamaha R1', 'Ducati Panigale', 'Harley Davidson', 'Kawasaki Ninja'];
+                case 'B': return ['Toyota Camry', 'Honda Civic', 'Tesla Model 3', 'BMW 3 Series'];
+                case 'C': return ['Volvo FH16', 'Mercedes Actros', 'Scania R500', 'MAN TGX'];
+                case 'D': return ['Mercedes Tourismo', 'Volvo 9700', 'MAN Lions Coach', 'Setra'];
+                case 'M': return ['Honda Ruckus', 'Vespa Primavera', 'Yamaha Zuma', 'Razor MX350'];
+                case 'E': return ['VW Golf + прицеп', 'Skoda Octavia + прицеп', 'Ford Focus + прицеп', 'Kia Ceed + прицеп'];
+                default: return [];
+            }
+        }
+
+        function handleSwitchCategory(category) {
+            let description = getVehicleDescription(category);
+            let sequence = getVehicleSequence(category);
+            
+            document.getElementById('switchResult').innerText = description;
+            
+            let seqHtml = sequence.map((item, index) => (index+1) + '. ' + item).join(' | ');
+            document.getElementById('switchSequence').innerHTML = seqHtml || 'Нет данных';
+        }
+
+        function handleRadioCategory(category) {
+            let description = getVehicleDescription(category);
+            let sequence = getVehicleSequence(category);
+            
+            document.getElementById('radioResult').innerText = description;
+            
+            let seqHtml = sequence.map((item, index) => (index+1) + '. ' + item).join(' | ');
+            document.getElementById('radioSequence').innerHTML = seqHtml || 'Нет данных';
+        }
+
+        const selectElement = document.getElementById('categorySelect');
+        selectElement.addEventListener('change', function(event) {
+            let selectedValue = event.target.value;
+            handleSwitchCategory(selectedValue);
+        });
+
+        const radioButtons = document.querySelectorAll('input[name="vehicleRadio"]');
+        radioButtons.forEach(function(radio) {
+            radio.addEventListener('change', function() {
+                if (this.checked) {
+                    handleRadioCategory(this.value);
+                }
+            });
+        });
+        handleSwitchCategory('A');
+    </script>
+
+    </body>
+</html>
