@@ -1,0 +1,38 @@
+﻿@{
+    Layout = null;
+}
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Вход</title>
+    <style>
+        body {
+            font-family: Arial;
+            margin: 40px;
+        }
+
+        .error {
+            color: red;
+        }
+
+        input {
+            margin: 5px;
+        }
+    </style>
+</head>
+<body>
+    <h2>Вход</h2>
+    @if (ViewBag.Error != null)
+    {
+        <div class="error">@ViewBag.Error</div>
+    }
+    <form method="post">
+        <label>Логин:</label>
+        <input type="text" name="login" required /><br />
+        <label>Пароль:</label>
+        <input type="password" name="password" required /><br />
+        <button type="submit">Войти</button>
+    </form>
+    <p>Нет аккаунта? <a href="/Account/Register">Зарегистрироваться</a></p>
+</body>
+</html>
