@@ -1,0 +1,12 @@
+﻿@model List<string>
+@{
+    ViewData["Title"] = "Авторы";
+}
+<h2>Список всех авторов</h2>
+<ul>
+    @foreach (var a in Model)
+    {
+        <li><a href="/Books/SearchByAuthor?author=@a">@a</a></li>
+    }
+</ul>
+<p><a href="/Books/SearchByAuthor">Новый поиск</a></p>

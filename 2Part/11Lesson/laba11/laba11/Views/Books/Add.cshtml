@@ -1,0 +1,29 @@
+﻿@model laba11.Models.Book
+@{
+    ViewData["Title"] = "Добавить книгу";
+}
+<h2>Добавление книги</h2>
+@if (ViewBag.Error != null)
+{
+    <div style="color:red">@ViewBag.Error</div>
+}
+<form method="post">
+    <div>
+        <label>Название:</label><br />
+        <input asp-for="Title" required />
+    </div>
+    <div>
+        <label>Автор:</label><br />
+        <input asp-for="Author" required />
+    </div>
+    <div>
+        <label>Страниц:</label><br />
+        <input asp-for="Pages" type="number" required />
+    </div>
+    <div>
+        <label>Год издания:</label><br />
+        <input asp-for="Year" type="number" required />
+    </div>
+    <button type="submit">Добавить</button>
+</form>
+<p><a href="/Books/Index">Назад</a></p>

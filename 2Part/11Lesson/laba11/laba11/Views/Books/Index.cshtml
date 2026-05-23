@@ -1,0 +1,28 @@
+﻿@model IEnumerable<laba11.Models.Book>
+@{
+    ViewData["Title"] = "Все книги";
+}
+<h2>Все книги</h2>
+<p>
+    <a href="/Books/Add">Добавить книгу</a> |
+    <a href="/Books/SearchByAuthor">Поиск по автору</a>
+</p>
+<table border="1" cellpadding="5">
+    <tr>
+        <th>Id</th>
+        <th>Название</th>
+        <th>Автор</th>
+        <th>Страниц</th>
+        <th>Год</th>
+    </tr>
+    @foreach (var b in Model)
+    {
+        <tr>
+            <td>@b.Id</td>
+            <td>@b.Title</td>
+            <td>@b.Author</td>
+            <td>@b.Pages</td>
+            <td>@b.Year</td>
+        </tr>
+    }
+</table>
