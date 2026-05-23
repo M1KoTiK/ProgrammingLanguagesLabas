@@ -1,0 +1,131 @@
+﻿@{
+    Layout = null;
+}
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <title>Блог</title>
+    <style>
+        body {
+            font-family: Arial;
+            margin: 20px;
+            background: #f4f4f4;
+        }
+
+        .container {
+            max-width: 800px;
+            margin: auto;
+            background: white;
+            padding: 20px;
+            border-radius: 8px;
+        }
+
+        .record {
+            padding: 10px;
+            margin: 5px 0;
+            border-radius: 4px;
+        }
+
+        .even {
+            background: #ddd;
+        }
+
+        .odd {
+            background: #bbb;
+        }
+
+        .date {
+            font-weight: bold;
+        }
+
+        .message {
+            margin-top: 5px;
+        }
+
+        textarea {
+            width: 100%;
+            padding: 8px;
+        }
+
+        button {
+            padding: 8px 16px;
+            background: blue;
+            color: white;
+            border: none;
+            cursor: pointer;
+        }
+
+        .error {
+            color: red;
+        }
+
+        .success {
+            color: green;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Блог</h1>
+        <div id="records"></div>
+        <h3>Новая запись</h3>
+        <textarea id="msg" rows="3" placeholder="Напишите..."></textarea>
+        <br>
+        <button id="send">Отправить</button>
+        <div id="result"></div>
+    </div>
+
+    <script>
+        async function load() {
+            const res = await fetch('/Blog/GetRecords');
+            const records = await res.json();
+            const container = document.getElementById('records');
+            if (!records.length) {
+                container.innerHTML = '<p>Пусто</p>';
+                return;
+            }
+            let html = '';
+            records.forEach((r, i) => {
+                const cls = i % 2 === 0 ? 'even' : 'odd';
+                const date = new Date(r.date).toLocaleString();
+                html += '<div class="record ' + cls + '">'
+                    + '<div class="date">' + date + '</div>'
+                    + '<div class="message">' + escape(r.message) + '</div>'
+                    + '</div>';
+            });
+            container.innerHTML = html;
+        }
+
+        function escape(str) {
+            const div = document.createElement('div');
+            div.textContent = str;
+            return div.innerHTML;
+        }
+
+        document.getElementById('send').onclick = async () => {
+            const msg = document.getElementById('msg').value.trim();
+            const resultDiv = document.getElementById('result');
+            if (!msg) {
+                resultDiv.innerHTML = '<span class="error">Введите текст</span>';
+                return;
+            }
+            const res = await fetch('/Blog/AddRecord', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify(msg)
+            });
+            if (res.ok) {
+                resultDiv.innerHTML = '<span class="success">Добавлено</span>';
+                document.getElementById('msg').value = '';
+                load();
+                setTimeout(() => resultDiv.innerHTML = '', 1500);
+            } else {
+                resultDiv.innerHTML = '<span class="error">Ошибка</span>';
+            }
+        };
+
+        load();
+    </script>
+</body>
+</html>
