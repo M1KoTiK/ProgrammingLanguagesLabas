@@ -1,0 +1,76 @@
+﻿@{
+    Layout = null;
+}
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Главная</title>
+    <style>
+        body {
+            font-family: Arial;
+            margin: 20px;
+        }
+
+        .balance {
+            font-size: 20px;
+            margin: 10px 0;
+        }
+
+        input, button {
+            margin: 5px;
+        }
+
+        .error {
+            color: red;
+        }
+
+        .success {
+            color: green;
+        }
+    </style>
+</head>
+<body>
+    <h2>Добро пожаловать, @ViewBag.UserLogin (роль: @ViewBag.Role)</h2>
+    <div class="balance">Баланс: <span id="balance">@ViewBag.Balance</span> руб.</div>
+
+    <h3>Перевод средств</h3>
+    <input type="text" id="toLogin" placeholder="Логин получателя" />
+    <input type="number" id="amount" placeholder="Сумма" step="0.01" />
+    <button id="transferBtn">Перевести</button>
+    <div id="transferResult"></div>
+
+    <p><a href="/Home/ChangePassword">Сменить пароль</a></p>
+    @if (ViewBag.Role == "admin")
+    {
+        <p><a href="/Admin/Users">Управление пользователями</a></p>
+    }
+    <p><a href="/Account/Logout">Выйти</a></p>
+
+    <script>
+        document.getElementById("transferBtn").addEventListener("click", async () => {
+            const toLogin = document.getElementById("toLogin").value.trim();
+            const amount = parseFloat(document.getElementById("amount").value);
+            if (!toLogin || isNaN(amount) || amount <= 0) {
+                document.getElementById("transferResult").innerHTML = "<span class='error'>Введите корректные данные</span>";
+                return;
+            }
+            const formData = new FormData();
+            formData.append("toLogin", toLogin);
+            formData.append("amount", amount);
+            const response = await fetch("/Home/Transfer", {
+                method: "POST",
+                body: formData
+            });
+            const result = await response.json();
+            if (result.success) {
+                document.getElementById("balance").innerText = result.newBalance;
+                document.getElementById("transferResult").innerHTML = "<span class='success'>Перевод выполнен</span>";
+                document.getElementById("toLogin").value = "";
+                document.getElementById("amount").value = "";
+            } else {
+                document.getElementById("transferResult").innerHTML = "<span class='error'>" + result.message + "</span>";
+            }
+        });
+    </script>
+</body>
+</html>

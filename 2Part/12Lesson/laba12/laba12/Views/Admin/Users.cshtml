@@ -1,0 +1,86 @@
+﻿@model List<laba12.Models.User>
+@{
+    Layout = null;
+}
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Управление пользователями</title>
+    <style>
+        table {
+            border-collapse: collapse;
+            width: 100%;
+        }
+
+        th, td {
+            border: 1px solid #ddd;
+            padding: 8px;
+            text-align: left;
+        }
+
+        .error {
+            color: red;
+        }
+
+        .success {
+            color: green;
+        }
+    </style>
+</head>
+<body>
+    <h2>Список пользователей</h2>
+    <table>
+        <thead>
+            <tr><th>ID</th><th>Логин</th><th>Баланс</th><th>Действия</th></tr>
+        </thead>
+        <tbody>
+            @foreach (var u in Model)
+            {
+                <tr>
+                    <td>@u.Id</td>
+                    <td>@u.Login</td>
+                    <td><span id="balance_@u.Id">@u.Balance</span></td>
+                    <td>
+                        <input type="number" id="newBalance_@u.Id" placeholder="Новый баланс" step="0.01" />
+                        <button onclick="updateBalance(@u.Id)">Сохранить баланс</button>
+                        <button onclick="deleteUser(@u.Id)">Удалить</button>
+                    </td>
+                </tr>
+            }
+        </tbody>
+    </table>
+    <p><a href="/Home/Index">На главную</a></p>
+    <p><a href="/Account/Logout">Выйти</a></p>
+
+    <script>
+        async function updateBalance(userId) {
+            const newBalance = document.getElementById("newBalance_" + userId).value;
+            if (!newBalance) return;
+            const formData = new FormData();
+            formData.append("userId", userId);
+            formData.append("newBalance", newBalance);
+            const response = await fetch("/Admin/UpdateBalance", { method: "POST", body: formData });
+            const result = await response.json();
+            if (result.success) {
+                document.getElementById("balance_" + userId).innerText = newBalance;
+                alert("Баланс обновлён");
+            } else {
+                alert("Ошибка: " + result.message);
+            }
+        }
+
+        async function deleteUser(userId) {
+            if (!confirm("Удалить пользователя?")) return;
+            const formData = new FormData();
+            formData.append("userId", userId);
+            const response = await fetch("/Admin/DeleteUser", { method: "POST", body: formData });
+            const result = await response.json();
+            if (result.success) {
+                location.reload();
+            } else {
+                alert("Ошибка: " + result.message);
+            }
+        }
+    </script>
+</body>
+</html>
